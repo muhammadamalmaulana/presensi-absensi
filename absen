@@ -1,0 +1,2960 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="executive">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Smart Presensi 3D Command Deck &bull; Enterprise Attendance System</title>
+  
+  <!-- Premium Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6.5.1 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  
+  <!-- Three.js (WebGL 3D Spatial Engine) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- HTML5 QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+  
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       RADICAL NEW SHAPE: SPATIAL COMMAND DECK (Sidebar Dock + Cockpit Layout)
+       ========================================================================== */
+    :root {
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      /* THEME: EXECUTIVE TITANIUM */
+      --bg-base: #060912;
+      --bg-gradient: radial-gradient(circle at 60% -10%, #161c33 0%, #080d1a 45%, #03050a 100%);
+      
+      --deck-sidebar: rgba(11, 17, 34, 0.88);
+      --card-bg: rgba(14, 21, 40, 0.75);
+      --card-border: rgba(99, 102, 241, 0.22);
+      --card-border-glow: rgba(99, 102, 241, 0.55);
+      --card-shadow: 
+        0 24px 60px -15px rgba(0, 0, 0, 0.85),
+        0 0 35px rgba(99, 102, 241, 0.12),
+        inset 0 1px 1px rgba(255, 255, 255, 0.16);
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #475569;
+
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+      --primary-glow: rgba(99, 102, 241, 0.45);
+
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      --accent-glow: rgba(16, 185, 129, 0.45);
+
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --cyan: #06b6d4;
+
+      --surface-glass: rgba(17, 24, 45, 0.65);
+      --surface-hover: rgba(255, 255, 255, 0.06);
+      --bevel-top: rgba(255, 255, 255, 0.14);
+
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+    }
+
+    [data-theme="emerald"] {
+      --bg-base: #030b08;
+      --bg-gradient: radial-gradient(circle at 60% -10%, #0b3325 0%, #04140e 50%, #020705 100%);
+      --deck-sidebar: rgba(4, 20, 14, 0.88);
+      --card-bg: rgba(6, 26, 18, 0.75);
+      --card-border: rgba(16, 185, 129, 0.28);
+      --card-border-glow: rgba(16, 185, 129, 0.6);
+      --primary: #10b981;
+      --primary-light: #34d399;
+      --primary-gradient: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      --primary-glow: rgba(16, 185, 129, 0.5);
+      --accent: #06b6d4;
+      --accent-light: #22d3ee;
+      --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
+      --accent-glow: rgba(6, 182, 212, 0.4);
+    }
+
+    [data-theme="quantum"] {
+      --bg-base: #090514;
+      --bg-gradient: radial-gradient(circle at 60% -10%, #2a1452 0%, #0f0724 50%, #05020c 100%);
+      --deck-sidebar: rgba(18, 10, 36, 0.88);
+      --card-bg: rgba(22, 12, 45, 0.75);
+      --card-border: rgba(168, 85, 247, 0.28);
+      --card-border-glow: rgba(168, 85, 247, 0.6);
+      --primary: #a855f7;
+      --primary-light: #c084fc;
+      --primary-gradient: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+      --primary-glow: rgba(168, 85, 247, 0.5);
+      --accent: #ec4899;
+      --accent-light: #f472b6;
+      --accent-gradient: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+      --accent-glow: rgba(236, 72, 153, 0.4);
+    }
+
+    [data-theme="light"] {
+      --bg-base: #f0f4f9;
+      --bg-gradient: radial-gradient(circle at 60% -10%, #e0e7ff 0%, #f1f5f9 50%, #e2e8f0 100%);
+      --deck-sidebar: rgba(255, 255, 255, 0.95);
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --card-border: rgba(226, 232, 240, 0.95);
+      --card-border-glow: rgba(99, 102, 241, 0.45);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-subtle: #94a3b8;
+      --primary: #4f46e5;
+      --primary-light: #6366f1;
+      --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      --primary-glow: rgba(79, 70, 229, 0.35);
+      --accent: #059669;
+      --accent-light: #10b981;
+      --accent-gradient: linear-gradient(135deg, #059669 0%, #047857 100%);
+      --accent-glow: rgba(5, 150, 105, 0.35);
+      --surface-glass: rgba(248, 250, 252, 0.85);
+      --surface-hover: rgba(0, 0, 0, 0.04);
+      --bevel-top: rgba(255, 255, 255, 0.8);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-base);
+      background-image: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      justify-content: center;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* WebGL 3D Background Canvas */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.65;
+    }
+
+    /* ==========================================================================
+       APP SPATIAL COCKPIT LAYOUT (SIDEBAR + MAIN CANVAS)
+       ========================================================================== */
+    .cockpit-wrapper {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1440px;
+      min-height: 100vh;
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    /* 3D Glass Sidebar Rail */
+    .sidebar-rail {
+      width: 82px;
+      background: var(--deck-sidebar);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: 24px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--card-shadow);
+      flex-shrink: 0;
+      position: sticky;
+      top: 20px;
+      height: calc(100vh - 40px);
+      z-index: 50;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .rail-brand {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: var(--primary-gradient);
+      box-shadow: 0 8px 24px var(--primary-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transform: perspective(400px) rotateY(-8deg);
+      transition: transform 0.3s ease;
+    }
+    .rail-brand:hover {
+      transform: perspective(400px) rotateY(12deg) scale(1.08);
+    }
+    .rail-brand::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      transform: rotate(45deg);
+      animation: brandGlint 4s infinite linear;
+    }
+    @keyframes brandGlint {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      20%, 100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    /* Sidebar Navigation Pills */
+    .rail-nav-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .rail-nav-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .rail-nav-btn:hover {
+      background: var(--surface-hover);
+      color: var(--text-main);
+      transform: translateY(-2px);
+    }
+    .rail-nav-btn.active {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 6px 20px var(--primary-glow);
+      transform: scale(1.06);
+    }
+    .rail-nav-btn .nav-tooltip {
+      position: absolute;
+      left: 68px;
+      background: #090e1a;
+      border: 1px solid var(--primary);
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      z-index: 100;
+    }
+    .rail-nav-btn:hover .nav-tooltip {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Main Deck Stage */
+    .deck-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-width: 0;
+    }
+
+    /* Top Floating Island */
+    .top-command-island {
+      background: var(--card-bg);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .top-command-island::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), var(--accent), transparent);
+    }
+
+    .island-title h1 {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tag-pro-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(99, 102, 241, 0.16);
+      border: 1px solid var(--primary);
+      color: var(--primary-light);
+    }
+    .island-time {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .island-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-capsule {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 30px;
+      background: var(--surface-glass);
+      border: 1px solid var(--card-border);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--warning);
+      box-shadow: 0 0 10px var(--warning);
+      animation: pulse 2s infinite;
+    }
+    .pulse-dot.online { background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+    .pulse-dot.offline { background: var(--danger); box-shadow: 0 0 12px var(--danger); }
+    @keyframes pulse {
+      0%, 100% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* 4-Theme Color Dots */
+    .theme-palette-dots {
+      display: flex;
+      align-items: center;
+      background: var(--surface-glass);
+      border: 1px solid var(--card-border);
+      border-radius: 30px;
+      padding: 4px 6px;
+      gap: 4px;
+    }
+    .theme-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-dot:hover { transform: scale(1.2); }
+    .theme-dot.active { border-color: #fff; box-shadow: 0 0 10px var(--primary); transform: scale(1.15); }
+    .dot-exec { background: linear-gradient(135deg, #6366f1, #10b981); }
+    .dot-emr  { background: linear-gradient(135deg, #10b981, #06b6d4); }
+    .dot-qtm  { background: linear-gradient(135deg, #a855f7, #ec4899); }
+    .dot-lgt  { background: linear-gradient(135deg, #f8fafc, #94a3b8); }
+
+    /* Tactile 3D Buttons */
+    .btn-tactile-3d {
+      border: none;
+      background: var(--surface-glass);
+      color: var(--text-main);
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      text-decoration: none;
+      border: 1px solid var(--card-border);
+      box-shadow: 
+        0 4px 0 rgba(0, 0, 0, 0.4),
+        0 8px 18px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px var(--bevel-top);
+      transform: translateY(0);
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .btn-tactile-3d:hover {
+      background: var(--surface-hover);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.45), 0 12px 22px rgba(0, 0, 0, 0.4);
+    }
+    .btn-tactile-3d:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    .btn-primary-gradient {
+      background: var(--primary-gradient);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 5px 0 rgba(30, 27, 75, 0.8), 0 10px 25px var(--primary-glow);
+    }
+    .btn-stop-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+      box-shadow: 0 5px 0 #7f1d1d !important;
+      color: #fff !important;
+    }
+    .btn-icon-box {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      font-size: 14px;
+    }
+
+    /* Toast Notification Strip */
+    .toast-strip-spatial {
+      display: none;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      align-items: center;
+      gap: 12px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--card-shadow);
+      animation: toastDrop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      border: 1px solid transparent;
+    }
+    @keyframes toastDrop {
+      from { opacity: 0; transform: translateY(-10px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .toast-strip-spatial.success { display: flex; background: rgba(16, 185, 129, 0.16); color: #10b981; border-color: rgba(16, 185, 129, 0.35); }
+    .toast-strip-spatial.error { display: flex; background: rgba(239, 68, 68, 0.16); color: #f87171; border-color: rgba(239, 68, 68, 0.35); }
+    .toast-strip-spatial.warning { display: flex; background: rgba(245, 158, 11, 0.16); color: #fbbf24; border-color: rgba(245, 158, 11, 0.35); }
+    .toast-strip-spatial.info { display: flex; background: rgba(99, 102, 241, 0.16); color: #818cf8; border-color: rgba(99, 102, 241, 0.35); }
+
+    /* ==========================================================================
+       VIEW CONTAINER & PAGE ROUTING
+       ========================================================================== */
+    .view-content-pane {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      animation: viewFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .view-content-pane.active {
+      display: flex;
+    }
+    @keyframes viewFade {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       RADICAL VIEW 1: SPATIAL COCKPIT COMMAND (3-PILLAR HERO + DATA MATRIX)
+       ========================================================================== */
+    .cockpit-hero-grid {
+      display: grid;
+      grid-template-columns: 290px 1fr 310px;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1200px) {
+      .cockpit-hero-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero-pillar-stream {
+        grid-column: span 2;
+      }
+    }
+    @media (max-width: 768px) {
+      .cockpit-hero-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-pillar-stream {
+        grid-column: span 1;
+      }
+    }
+
+    /* Common Spatial Glass Card */
+    .spatial-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+    .spatial-card:hover {
+      border-color: var(--card-border-glow);
+      box-shadow: 
+        0 25px 60px -10px rgba(0, 0, 0, 0.85),
+        0 0 35px var(--primary-glow);
+    }
+
+    /* PILLAR 1: RADIAL CIRCULAR GAUGE WIDGET */
+    .hero-pillar-gauge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 14px;
+    }
+
+    .radial-gauge-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .radial-gauge-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .gauge-bg-circle {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 12;
+    }
+    .gauge-val-circle {
+      fill: none;
+      stroke: url(#gaugeGradient);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .gauge-center-text {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .gauge-percent {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1;
+    }
+    .gauge-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 4px;
+    }
+
+    .gauge-metrics-trio {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: var(--surface-glass);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 10px 6px;
+      text-align: center;
+    }
+    .gm-item span {
+      display: block;
+      font-size: 9px;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .gm-item strong {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* PILLAR 2: CURVED BIOMETRIC SCANNER VISOR */
+    .hero-pillar-scanner {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .scanner-visor-pod {
+      position: relative;
+      background: #020611;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1.5px solid var(--card-border);
+      box-shadow: 
+        inset 0 0 50px rgba(0, 0, 0, 0.9),
+        0 15px 40px rgba(0, 0, 0, 0.6),
+        0 0 30px var(--primary-glow);
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #qr-reader {
+      width: 100% !important;
+      min-height: 250px;
+      background: #020611;
+      border: none !important;
+    }
+    #qr-reader video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      border-radius: var(--radius-lg) !important;
+      display: block !important;
+    }
+    #qr-reader > div:not(:first-child) { display: none !important; }
+
+    /* Precision Targeting Viewfinder Overlay */
+    .precision-targeting-hud {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .radar-ring-outer {
+      position: absolute;
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      animation: radarSpin 22s linear infinite;
+    }
+    .radar-ring-inner {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 1px dotted var(--primary);
+      opacity: 0.5;
+      animation: radarSpinRev 16s linear infinite;
+    }
+    @keyframes radarSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes radarSpinRev { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+
+    .reticle-box-pod {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      border-radius: 18px;
+      box-shadow: 0 0 0 9999px rgba(3, 7, 18, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    .reticle-bracket {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: var(--primary-light);
+      border-style: solid;
+      border-width: 0;
+      filter: drop-shadow(0 0 8px var(--primary));
+    }
+    .rb-tl { top: -2px; left: -2px; border-top-width: 4px; border-left-width: 4px; border-radius: 8px 0 0 0; }
+    .rb-tr { top: -2px; right: -2px; border-top-width: 4px; border-right-width: 4px; border-radius: 0 8px 0 0; }
+    .rb-bl { bottom: -2px; left: -2px; border-bottom-width: 4px; border-left-width: 4px; border-radius: 0 0 0 8px; }
+    .rb-br { bottom: -2px; right: -2px; border-bottom-width: 4px; border-right-width: 4px; border-radius: 0 0 8px 0; }
+
+    .scanner-sweep-line {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary-light), #fff, var(--accent-light), transparent);
+      box-shadow: 0 0 16px var(--primary-light), 0 0 32px var(--accent-light);
+      animation: laserSweep 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      border-radius: 4px;
+    }
+    @keyframes laserSweep {
+      0% { top: 10px; opacity: 0.7; }
+      50% { top: 165px; opacity: 1; }
+      100% { top: 10px; opacity: 0.7; }
+    }
+
+    .pod-status-badge {
+      position: absolute;
+      bottom: 12px;
+      padding: 5px 14px;
+      background: rgba(6, 10, 22, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    /* Visor Controls */
+    .visor-toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 10px;
+    }
+    .fast-punch-bar {
+      display: flex;
+      gap: 8px;
+      background: var(--surface-glass);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 5px;
+    }
+    .fast-punch-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 6px 10px;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .fast-punch-input:focus { outline: none; }
+    .fast-punch-input::placeholder { color: var(--text-subtle); }
+
+    /* PILLAR 3: LIVE RECENT ATTENDANCE STREAM */
+    .hero-pillar-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .stream-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .stream-feed-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .stream-feed-list::-webkit-scrollbar { width: 4px; }
+    .stream-feed-list::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+
+    .stream-item-chip {
+      background: var(--surface-glass);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      transition: background 0.2s;
+    }
+    .stream-item-chip:hover {
+      background: var(--surface-hover);
+      border-color: var(--primary);
+    }
+    .stream-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stream-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: var(--primary-gradient);
+      color: #fff;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* BOTTOM DATA MATRIX (TABLE & CONTROLS) */
+    .data-matrix-box {
+      background: var(--card-bg);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .matrix-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .matrix-search-box {
+      flex: 1;
+      max-width: 420px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .matrix-search-box i {
+      position: absolute;
+      left: 14px;
+      color: var(--primary-light);
+      font-size: 13px;
+    }
+    .matrix-search-input {
+      width: 100%;
+      padding: 10px 14px 10px 40px;
+      background: var(--surface-glass);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 12px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s;
+    }
+    .matrix-search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .matrix-filters {
+      display: flex;
+      gap: 8px;
+    }
+    .m-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid var(--card-border);
+      background: var(--surface-glass);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .m-pill:hover { background: var(--surface-hover); color: var(--text-main); }
+    .m-pill.active {
+      background: var(--primary-gradient);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .matrix-scroll-wrapper {
+      background: var(--surface-glass);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+    .matrix-scroll-wrapper::-webkit-scrollbar { width: 5px; }
+    .matrix-scroll-wrapper::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+    table.matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12px;
+    }
+    table.matrix-table th {
+      padding: 12px 14px;
+      background: var(--card-bg);
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.8px;
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      z-index: 5;
+      border-bottom: 1px solid var(--card-border);
+    }
+    table.matrix-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      vertical-align: middle;
+      transition: background 0.2s;
+    }
+    table.matrix-table tr:hover td {
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .user-flex-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar-cell-3d {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: var(--primary-gradient);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .chip-status-3d {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .chip-status-3d.hadir {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .chip-status-3d.belum {
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--text-muted);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    /* ==========================================================================
+       VIEW 2: KTM 3D STUDIO (REAL 3D FLIP CARD)
+       ========================================================================== */
+    .ktm-studio-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0;
+    }
+
+    .ktm-card-3d-box {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      height: 270px;
+      perspective: 1200px;
+      cursor: pointer;
+    }
+    .ktm-inner-flip {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border-radius: 20px;
+    }
+    .ktm-card-3d-box.flipped .ktm-inner-flip {
+      transform: rotateY(180deg);
+    }
+
+    .ktm-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      padding: 22px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.85),
+        0 0 35px var(--primary-glow),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .ktm-front {
+      background: linear-gradient(135deg, #0b1120 0%, #1e1b4b 50%, #064e3b 100%);
+    }
+    .ktm-front::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        115deg,
+        transparent 25%,
+        rgba(255, 255, 255, 0.1) 40%,
+        rgba(99, 102, 241, 0.2) 48%,
+        rgba(255, 255, 255, 0.3) 52%,
+        transparent 65%
+      );
+      transform: rotate(30deg);
+      pointer-events: none;
+      animation: cardShimmer 7s infinite linear;
+    }
+    @keyframes cardShimmer {
+      0% { transform: translateY(-100%) rotate(30deg); }
+      100% { transform: translateY(100%) rotate(30deg); }
+    }
+
+    .ktm-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 2;
+    }
+    .ktm-univ-h3 {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+    .ktm-univ-sub {
+      font-size: 10px;
+      color: var(--primary-light);
+      font-family: var(--font-mono);
+      letter-spacing: 1px;
+    }
+
+    .ktm-gold-microchip {
+      width: 38px;
+      height: 28px;
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+    .ktm-gold-microchip::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .ktm-gold-microchip::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 1px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .ktm-mid {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 2;
+    }
+    .ktm-avatar-sq {
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      border: 2px solid #fff;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 30px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .ktm-data-block { flex: 1; }
+    .ktm-data-block .name {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .ktm-data-block .nim {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-light);
+      margin-top: 2px;
+    }
+    .ktm-data-block .dept {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 2px;
+    }
+
+    .ktm-qr-white {
+      padding: 6px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+    .ktm-qr-white img {
+      display: block;
+      width: 74px;
+      height: 74px;
+      border-radius: 6px;
+    }
+
+    .ktm-btm {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.6);
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+
+    /* BACK FACE */
+    .ktm-back {
+      background: linear-gradient(135deg, #090d16 0%, #151b2e 100%);
+      transform: rotateY(180deg);
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .mag-stripe-black {
+      width: calc(100% + 48px);
+      margin: -20px -24px 10px -24px;
+      height: 42px;
+      background: #020408;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .barcode-block {
+      background: #ffffff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .barcode-lines {
+      width: 100%;
+      height: 24px;
+      background: repeating-linear-gradient(90deg, #000 0px, #000 2px, transparent 2px, transparent 4px, #000 4px, #000 7px, transparent 7px, transparent 8px);
+    }
+
+    /* ==========================================================================
+       VIEW 3: AUDITORIUM PROJECTOR STAGE
+       ========================================================================== */
+    .projector-stage-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      text-align: center;
+      padding: 30px;
+    }
+    .big-qr-floating-frame {
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 50px var(--primary-glow);
+    }
+    .big-qr-floating-frame img {
+      display: block;
+      width: 260px;
+      height: 260px;
+      border-radius: 16px;
+    }
+
+    /* ==========================================================================
+       POPUP MODAL PRESENSI BERHASIL
+       ========================================================================== */
+    .modal-backdrop-spatial {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 7, 18, 0.8);
+      backdrop-filter: blur(16px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      perspective: 1200px;
+    }
+    .modal-backdrop-spatial.show {
+      display: flex;
+      animation: modalFade 0.25s ease;
+    }
+    @keyframes modalFade { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-card-spatial {
+      background: var(--card-bg);
+      border: 1.5px solid var(--primary);
+      border-radius: var(--radius-xl);
+      padding: 30px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), 0 0 50px var(--primary-glow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes modalPop {
+      0% { transform: scale(0.7) rotateX(20deg) translateZ(-80px); opacity: 0; }
+      100% { transform: scale(1) rotateX(0deg) translateZ(0); opacity: 1; }
+    }
+    .modal-trophy-circle {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 10px 30px var(--accent-glow);
+    }
+
+    /* Mobile Bottom Dock */
+    .mobile-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--card-border);
+      padding: 8px 12px;
+      display: none;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
+    }
+    @media (max-width: 992px) {
+      .sidebar-rail { display: none; }
+      .mobile-bottom-bar { display: flex; }
+      .cockpit-wrapper { padding: 12px 12px 85px 12px; }
+    }
+    .m-dock-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 700;
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .m-dock-btn i { font-size: 18px; }
+    .m-dock-btn.active { color: var(--primary-light); }
+    .m-dock-btn.fab-center {
+      background: var(--primary-gradient);
+      color: #fff !important;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      margin-top: -25px;
+      box-shadow: 0 8px 25px var(--primary-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Three.js Spatial WebGL Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Cockpit Container -->
+  <div class="cockpit-wrapper">
+    
+    <!-- 3D Glass Sidebar Rail -->
+    <aside class="sidebar-rail">
+      <div class="rail-brand" title="Smart Presensi 3D Cockpit" onclick="switchView('cockpit')">
+        <i class="fas fa-qrcode"></i>
+      </div>
+
+      <!-- Navigation Icons -->
+      <div class="rail-nav-group">
+        <button class="rail-nav-btn active" id="railBtnCockpit" onclick="switchView('cockpit')" title="Cockpit Live">
+          <i class="fas fa-gauge-high"></i>
+          <span class="nav-tooltip">Cockpit Command</span>
+        </button>
+        <button class="rail-nav-btn" id="railBtnKtm" onclick="switchView('ktm')" title="KTM 3D Studio">
+          <i class="fas fa-id-card"></i>
+          <span class="nav-tooltip">KTM 3D Studio</span>
+        </button>
+        <button class="rail-nav-btn" id="railBtnProjector" onclick="switchView('projector')" title="Proyektor Kelas">
+          <i class="fas fa-chalkboard-user"></i>
+          <span class="nav-tooltip">Proyektor Kelas</span>
+        </button>
+      </div>
+
+      <!-- Bottom Rail Action -->
+      <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+        <button class="rail-nav-btn" onclick="toggleAudioFeedback()" id="btnAudioToggle" title="Toggle Efek Suara">
+          <i class="fas fa-volume-up" id="audioIcon"></i>
+          <span class="nav-tooltip">Audio Feedback</span>
+        </button>
+        <a id="sheetLink" href="#" target="_blank" class="rail-nav-btn" title="Buka Google Sheets">
+          <i class="fas fa-file-excel" style="color: #10b981;"></i>
+          <span class="nav-tooltip">Google Sheets</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Deck Stage -->
+    <main class="deck-stage">
+      
+      <!-- Top Floating Command Island -->
+      <header class="top-command-island">
+        <div class="island-title">
+          <h1>Smart Presensi <span class="tag-pro-pill">SPATIAL DECK 3.0</span></h1>
+          <div class="island-time">
+            <i class="far fa-clock" style="color:var(--primary-light);"></i>
+            <span id="liveClock">--:--:-- WIB</span> &bull; 
+            <span id="liveDateStr">Hari Ini</span>
+          </div>
+        </div>
+
+        <div class="island-controls">
+          <div class="status-capsule">
+            <span class="pulse-dot" id="statusDot"></span>
+            <span id="statusLabel">Memeriksa jaringan...</span>
+          </div>
+
+          <!-- 4-Theme Color Switcher -->
+          <div class="theme-palette-dots" title="Ganti Tema Warna">
+            <div class="theme-dot dot-exec active" onclick="setExecutiveTheme('executive')" title="Executive Titanium"></div>
+            <div class="theme-dot dot-emr" onclick="setExecutiveTheme('emerald')" title="Cyber Emerald"></div>
+            <div class="theme-dot dot-qtm" onclick="setExecutiveTheme('quantum')" title="Quantum Violet"></div>
+            <div class="theme-dot dot-lgt" onclick="setExecutiveTheme('light')" title="Studio Light"></div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Global Toast Alert -->
+      <div class="toast-strip-spatial" id="toastStrip">
+        <i class="fas fa-info-circle" id="toastIcon"></i>
+        <span id="toastText">Pesan status sistem</span>
+      </div>
+
+      <!-- ==================================================================
+           VIEW 1: SPATIAL COCKPIT COMMAND (HERO 3-PILLAR + DATA MATRIX)
+           ================================================================== -->
+      <div class="view-content-pane active" id="view-cockpit">
+        
+        <!-- 3-Pillar Cockpit Hero: Gauge | Scanner | Stream -->
+        <div class="cockpit-hero-grid">
+          
+          <!-- PILLAR 1: RADIAL CIRCULAR GAUGE WIDGET -->
+          <div class="spatial-card hero-pillar-gauge">
+            <div class="radial-gauge-wrapper">
+              <svg class="radial-gauge-svg" viewBox="0 0 160 160">
+                <defs>
+                  <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="var(--primary)" />
+                    <stop offset="100%" stop-color="var(--accent)" />
+                  </linearGradient>
+                </defs>
+                <circle class="gauge-bg-circle" cx="80" cy="80" r="70" />
+                <circle class="gauge-val-circle" id="gaugeValCircle" cx="80" cy="80" r="70" />
+              </svg>
+              <div class="gauge-center-text">
+                <div class="gauge-percent" id="gaugePercentText">0%</div>
+                <div class="gauge-label">Presensi</div>
+              </div>
+            </div>
+
+            <div class="gauge-metrics-trio">
+              <div class="gm-item">
+                <span>Total</span>
+                <strong id="statTotalVal">0</strong>
+              </div>
+              <div class="gm-item">
+                <span style="color:var(--accent-light);">Hadir</span>
+                <strong id="statHadirVal" style="color:var(--accent-light);">0</strong>
+              </div>
+              <div class="gm-item">
+                <span style="color:var(--warning);">Belum</span>
+                <strong id="statBelumVal" style="color:var(--warning);">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- PILLAR 2: CURVED BIOMETRIC SCANNER VISOR -->
+          <div class="spatial-card hero-pillar-scanner">
+            <div class="scanner-visor-pod">
+              <div id="qr-reader"></div>
+
+              <div class="precision-targeting-hud" id="hudOverlay">
+                <div class="radar-ring-outer"></div>
+                <div class="radar-ring-inner"></div>
+
+                <div class="reticle-box-pod">
+                  <div class="reticle-bracket rb-tl"></div>
+                  <div class="reticle-bracket rb-tr"></div>
+                  <div class="reticle-bracket rb-bl"></div>
+                  <div class="reticle-bracket rb-br"></div>
+                  <div class="scanner-sweep-line" id="laserBeam"></div>
+                </div>
+
+                <div class="pod-status-badge">
+                  <i class="fas fa-qrcode" style="color:var(--primary-light);"></i>
+                  <span id="scannerStatusText">Arahkan kamera ke QR</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visor Toolbar -->
+            <div class="visor-toolbar">
+              <button class="btn-tactile-3d btn-primary-gradient" id="btnToggleScan" onclick="toggleScanner()">
+                <i class="fas fa-play" id="btnScanIcon"></i> <span id="btnScanText">Mulai Scan</span>
+              </button>
+              <button class="btn-tactile-3d btn-icon-box" onclick="switchCameraMode()" title="Ganti Kamera">
+                <i class="fas fa-camera-rotate"></i>
+              </button>
+              <button class="btn-tactile-3d btn-icon-box" onclick="toggleFlash()" title="Flashlight">
+                <i class="fas fa-bolt"></i>
+              </button>
+              <button class="btn-tactile-3d btn-icon-box" onclick="triggerFileInput()" title="Scan Screenshot">
+                <i class="fas fa-image"></i>
+              </button>
+              <input type="file" id="qrFileInput" accept="image/*" style="display:none;" onchange="handleQrFile(this)">
+            </div>
+
+            <!-- Fast Manual Punch -->
+            <div class="fast-punch-bar">
+              <input type="text" class="fast-punch-input" id="manualNimInput" placeholder="Ketik NIM untuk presensi..." onkeypress="if(event.key==='Enter') punchManualNIM()">
+              <button class="btn-tactile-3d btn-primary-gradient" style="padding: 6px 12px; font-size: 11px;" onclick="punchManualNIM()">
+                Hadir
+              </button>
+            </div>
+          </div>
+
+          <!-- PILLAR 3: LIVE RECENT STREAM -->
+          <div class="spatial-card hero-pillar-stream">
+            <div class="stream-header">
+              <span><i class="fas fa-bolt" style="color:var(--primary-light);"></i> AKTIVITAS LIVE</span>
+              <span id="liveTickerText" style="font-size: 10px; color: var(--accent-light);">Real-time</span>
+            </div>
+            
+            <div class="stream-feed-list" id="streamFeedList">
+              <div style="text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 12px;">
+                <i class="fas fa-satellite-dish" style="font-size: 24px; opacity: 0.4; display: block; margin-bottom: 8px;"></i>
+                Belum ada aktivitas presensi hari ini
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- BOTTOM DATA MATRIX -->
+        <div class="data-matrix-box">
+          <div class="matrix-top-bar">
+            <div class="matrix-search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" class="matrix-search-input" id="tableSearchInput" placeholder="Cari nama mahasiswa, NIM, atau kelas..." oninput="handleTableFilter()">
+            </div>
+
+            <div class="matrix-filters">
+              <button class="m-pill active" onclick="setTableFilter('all', this)">Semua (<span id="pillCountAll">0</span>)</button>
+              <button class="m-pill" onclick="setTableFilter('hadir', this)"><i class="fas fa-check-circle" style="color:var(--accent-light);"></i> Hadir (<span id="pillCountHadir">0</span>)</button>
+              <button class="m-pill" onclick="setTableFilter('belum', this)"><i class="fas fa-clock" style="color:var(--warning);"></i> Belum (<span id="pillCountBelum">0</span>)</button>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tactile-3d btn-icon-box" onclick="loadAllData()" title="Sinkronkan dengan Google Sheets">
+                <i class="fas fa-rotate"></i>
+              </button>
+              <button class="btn-tactile-3d" onclick="exportAttendanceCSV()" title="Ekspor ke CSV / Excel">
+                <i class="fas fa-file-csv"></i> Ekspor
+              </button>
+              <button class="btn-tactile-3d btn-icon-box" onclick="window.print()" title="Cetak Rekap Presensi">
+                <i class="fas fa-print"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="matrix-scroll-wrapper">
+            <table class="matrix-table" id="attendanceTable">
+              <thead>
+                <tr>
+                  <th style="width: 32%;">Mahasiswa</th>
+                  <th style="width: 25%;">NIM</th>
+                  <th style="width: 20%;">Kelas</th>
+                  <th style="width: 23%; text-align: right;">Status & Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTableBody">
+                <tr>
+                  <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <i class="fas fa-circle-notch fa-spin" style="font-size:20px; display:block; margin-bottom:8px; color:var(--primary-light);"></i>
+                    Menghubungkan ke Google Sheets...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================================================================
+           VIEW 2: KTM 3D FLIP STUDIO
+           ================================================================== -->
+      <div class="view-content-pane" id="view-ktm">
+        <div class="spatial-card ktm-studio-stage">
+          <div style="width: 100%; max-width: 500px; display: flex; gap: 10px;">
+            <input type="text" class="fast-punch-input" id="ktmNimInput" placeholder="Masukkan atau pilih NIM mahasiswa..." list="ktmDatalist" oninput="autoSelectStudentForKTM()" style="background:var(--surface-glass); border:1px solid var(--card-border); border-radius:var(--radius-sm); padding:10px 14px;">
+            <datalist id="ktmDatalist"></datalist>
+            <button class="btn-tactile-3d btn-primary-gradient" onclick="renderKTMCard()">
+              <i class="fas fa-magic"></i> Buat
+            </button>
+          </div>
+
+          <!-- 3D Flipping Card -->
+          <div class="ktm-card-3d-box" id="ktmCardPreview" onclick="toggleCardFlip()">
+            <div class="ktm-inner-flip">
+              
+              <!-- Front Face -->
+              <div class="ktm-face ktm-front">
+                <div class="ktm-top">
+                  <div>
+                    <div class="ktm-univ-h3">UNIVERSITAS TEKNOLOGI</div>
+                    <div class="ktm-univ-sub">KARTU TANDA MAHASISWA 3D</div>
+                  </div>
+                  <div class="ktm-gold-microchip"></div>
+                </div>
+
+                <div class="ktm-mid">
+                  <div class="ktm-avatar-sq" id="ktmAvatarInitials">M</div>
+                  <div class="ktm-data-block">
+                    <div class="name" id="ktmCardName">Nama Mahasiswa</div>
+                    <div class="nim" id="ktmCardNim">2410510000</div>
+                    <div class="dept" id="ktmCardJurusan">Teknik Informatika</div>
+                    <div class="dept" id="ktmCardKelas" style="color:var(--accent-light);">Kelas: TI-24-A</div>
+                  </div>
+                  <div class="ktm-qr-white">
+                    <img id="ktmCardQrImg" src="" alt="QR Mahasiswa">
+                  </div>
+                </div>
+
+                <div class="ktm-btm">
+                  <span>SMART PRESENSI 3D CERTIFIED</span>
+                  <span>KLIK KARTU UNTUK MEMUTAR 3D &bull; 2026/2027</span>
+                </div>
+              </div>
+
+              <!-- Back Face -->
+              <div class="ktm-face ktm-back">
+                <div class="mag-stripe-black"></div>
+                <div style="font-size: 10px; color: var(--text-muted); line-height: 1.5;">
+                  <strong style="color:#fff;">KETENTUAN KARTU MAHASISWA RESMI</strong>
+                  <p style="margin-top: 3px;">Kartu digital ini adalah dokumen identitas presensi yang sah dalam perkuliahan.</p>
+                  <p style="margin-top: 2px; color: var(--accent-light);">RFID Smart Embedded &bull; ISO-7810 Certified</p>
+                </div>
+                <div class="barcode-block">
+                  <div class="barcode-lines"></div>
+                  <div style="font-family: var(--font-mono); font-size: 10px; font-weight:700; color:#000;" id="ktmBarcodeNum">24105100000000</div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-muted); font-family:var(--font-mono);">
+                  <span>BAGIAN AKADEMIK</span>
+                  <span>KLIK LAGI UNTUK SISI DEPAN</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;" id="ktmActionButtons">
+            <button class="btn-tactile-3d btn-primary-gradient" onclick="downloadKtmCard()">
+              <i class="fas fa-download"></i> Unduh Gambar KTM (PNG)
+            </button>
+            <button class="btn-tactile-3d" onclick="printKtmCard()">
+              <i class="fas fa-print"></i> Cetak
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================================
+           VIEW 3: AUDITORIUM PROJECTOR STAGE
+           ================================================================== -->
+      <div class="view-content-pane" id="view-projector">
+        <div class="spatial-card projector-stage-box">
+          <span class="tag-pro-pill" style="font-size: 13px; padding: 6px 18px;"><i class="fas fa-broadcast-tower"></i> SESI PERKULIAHAN AKTIF</span>
+          
+          <div class="big-qr-floating-frame">
+            <img id="classMainQrImg" src="" alt="QR Presensi Masal">
+          </div>
+
+          <div>
+            <h2 style="font-family: var(--font-heading); font-size: 24px; font-weight: 800; color:#fff;">QR Presensi Masal Kelas</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px; max-width: 440px;">
+              Tampilkan di proyektor auditorium agar seluruh mahasiswa dapat memindai dari ponsel masing-masing.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 6px;">
+            <button class="btn-tactile-3d btn-primary-gradient" onclick="openFullscreenProjector()">
+              <i class="fas fa-expand"></i> Mode Layar Penuh (Proyektor)
+            </button>
+            <button class="btn-tactile-3d" onclick="downloadClassQR()">
+              <i class="fas fa-download"></i> Unduh QR PNG
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- POPUP MODAL PRESENSI BERHASIL -->
+  <div class="modal-backdrop-spatial" id="successModalLayer" onclick="closeSuccessModal(event)">
+    <div class="modal-card-spatial" onclick="event.stopPropagation()">
+      <div class="modal-trophy-circle">
+        <i class="fas fa-check"></i>
+      </div>
+      <div>
+        <h2 style="font-family: var(--font-heading); font-size: 22px; font-weight: 800; color: var(--accent-light);">Presensi Berhasil!</h2>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Tercatat otomatis di Google Sheets</p>
+      </div>
+
+      <div style="width: 100%; background: var(--surface-glass); border-radius: var(--radius-md); padding: 14px 18px; text-align: left; font-size: 13px; display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--card-border);" id="modalStudentDataBody"></div>
+
+      <button class="btn-tactile-3d btn-primary-gradient" style="width: 100%; padding: 12px;" onclick="closeSuccessModal()">
+        <i class="fas fa-arrow-right"></i> Lanjutkan Scan
+      </button>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN AUDITORIUM PROJECTION OVERLAY -->
+  <div class="modal-backdrop-spatial" id="projectorOverlay" style="background:#030712; padding:30px; flex-direction:column;">
+    <button class="btn-tactile-3d btn-stop-danger" style="position: absolute; top: 25px; right: 25px;" onclick="closeFullscreenProjector()">
+      <i class="fas fa-xmark"></i> Keluar Layar Penuh (ESC)
+    </button>
+    
+    <div style="text-align: center; margin-bottom: 24px;">
+      <span class="tag-pro-pill" style="font-size: 13px; padding: 6px 18px;"><i class="fas fa-chalkboard-teacher"></i> PRESENSI PERKULIAHAN MASAL</span>
+      <h1 style="font-family: var(--font-heading); font-size: 34px; font-weight: 800; margin-top: 12px; color: #fff;">Pindai QR Code Untuk Presensi</h1>
+    </div>
+
+    <div class="big-qr-floating-frame" style="padding: 24px;">
+      <img id="projectorOverlayQrImg" src="" alt="QR Proyektor" style="width: 320px; height: 320px;">
+    </div>
+  </div>
+
+  <!-- MOBILE BOTTOM NAVIGATION DOCK -->
+  <nav class="mobile-bottom-bar">
+    <button class="m-dock-btn active" onclick="switchView('cockpit')">
+      <i class="fas fa-gauge-high"></i>
+      <span>Cockpit</span>
+    </button>
+    <button class="m-dock-btn fab-center" onclick="switchView('cockpit'); if(!State.scanning) startScanner();">
+      <i class="fas fa-qrcode"></i>
+    </button>
+    <button class="m-dock-btn" onclick="switchView('ktm')">
+      <i class="fas fa-id-card"></i>
+      <span>KTM 3D</span>
+    </button>
+    <button class="m-dock-btn" onclick="switchView('projector')">
+      <i class="fas fa-chalkboard-user"></i>
+      <span>Proyektor</span>
+    </button>
+  </nav>
+
+  <!-- ==========================================================================
+       JAVASCRIPT ARCHITECTURE & THREE.JS 3D ENGINE
+       ========================================================================== */ -->
+  <script>
+    const CONFIG = {
+      API_URL: 'https://script.google.com/macros/s/AKfycbwFaiXWeQmp9D1U6YKlNM2u28Dgp8mcnYmzWxoWXH_FS3Po3oWJt1-kknsCZ_yRDranPQ/exec',
+      SHEET_URL: 'https://docs.google.com/spreadsheets/d/1PXOSZAXZNg7hvX-33DglZlM3saj4yclUhiYepiFNYhI/edit?gid=0#gid=0',
+      SHEET_GID_MAHASISWA: '0',
+      SHEET_GID_PRESENSI: '646034675',
+      CACHE_KEY_MAHASISWA: 'presensi_mahasiswa_cache_v2',
+      CACHE_KEY_PRESENSI: 'presensi_hari_ini_cache_v2',
+      CACHE_KEY_OFFLINE_QUEUE: 'presensi_offline_queue_v2',
+      REFRESH_INTERVAL_MS: 30000,
+      RESCAN_DELAY_MS: 2200
+    };
+
+    const State = {
+      scanner: null,
+      scanning: false,
+      flashOn: false,
+      processing: false,
+      facingMode: "environment",
+      mahasiswa: [],
+      presensiHariIni: {},
+      isOnline: false,
+      audioEnabled: true,
+      currentFilter: 'all',
+      searchQuery: '',
+      tanggalHariIni: '',
+      activeView: 'cockpit',
+      isCardFlipped: false
+    };
+
+    const $ = id => document.getElementById(id);
+
+    // ==========================================================================
+    // THREE.JS SPATIAL WEBGL 3D BACKGROUND
+    // ==========================================================================
+    let threeScene, threeCamera, threeRenderer, particleMesh;
+
+    function initThreeJS() {
+      const canvas = $('webgl-canvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      threeScene = new THREE.Scene();
+      threeCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      threeCamera.position.z = 85;
+
+      threeRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      threeRenderer.setSize(window.innerWidth, window.innerHeight);
+      threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // 3D Spatial Particle Constellation
+      const count = 300;
+      const geo = new THREE.BufferGeometry();
+      const pos = new Float32Array(count * 3);
+      const col = new Float32Array(count * 3);
+
+      const color1 = new THREE.Color(0x6366f1);
+      const color2 = new THREE.Color(0x10b981);
+
+      for (let i = 0; i < count; i++) {
+        pos[i * 3] = (Math.random() - 0.5) * 180;
+        pos[i * 3 + 1] = (Math.random() - 0.5) * 110;
+        pos[i * 3 + 2] = (Math.random() - 0.5) * 90;
+
+        const ratio = Math.random();
+        const mixed = color1.clone().lerp(color2, ratio);
+        col[i * 3] = mixed.r;
+        col[i * 3 + 1] = mixed.g;
+        col[i * 3 + 2] = mixed.b;
+      }
+
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+
+      const mat = new THREE.PointsMaterial({
+        size: 1.8,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending
+      });
+
+      particleMesh = new THREE.Points(geo, mat);
+      threeScene.add(particleMesh);
+
+      window.addEventListener('resize', () => {
+        threeCamera.aspect = window.innerWidth / window.innerHeight;
+        threeCamera.updateProjectionMatrix();
+        threeRenderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      let mouseX = 0, mouseY = 0;
+      window.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX - window.innerWidth / 2) * 0.02;
+        mouseY = (e.clientY - window.innerHeight / 2) * 0.02;
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        if (particleMesh) {
+          particleMesh.rotation.y += 0.001;
+          particleMesh.rotation.x += 0.0005;
+          particleMesh.position.x += (mouseX - particleMesh.position.x) * 0.04;
+          particleMesh.position.y += (-mouseY - particleMesh.position.y) * 0.04;
+        }
+        threeRenderer.render(threeScene, threeCamera);
+      }
+      animate();
+    }
+
+    // ==========================================================================
+    // VIEW ROUTER (Cockpit, KTM Studio, Projector)
+    // ==========================================================================
+    function switchView(viewName) {
+      State.activeView = viewName;
+      document.querySelectorAll('.view-content-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.rail-nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.m-dock-btn').forEach(b => b.classList.remove('active'));
+
+      const targetPane = $(`view-${viewName}`);
+      if (targetPane) targetPane.classList.add('active');
+
+      const targetRailBtn = $(`railBtn${capitalize(viewName)}`);
+      if (targetRailBtn) targetRailBtn.classList.add('active');
+
+      if (viewName === 'cockpit') {
+        if (!State.scanning) startScanner();
+      } else {
+        if (State.scanning) stopScanner();
+      }
+
+      if (viewName === 'ktm') {
+        populateKtmDatalist();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function capitalize(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    // ==========================================================================
+    // KTM 3D FLIP MECHANISM
+    // ==========================================================================
+    function toggleCardFlip() {
+      const box = $('ktmCardPreview');
+      if (!box) return;
+      State.isCardFlipped = !State.isCardFlipped;
+      box.classList.toggle('flipped', State.isCardFlipped);
+    }
+
+    // ==========================================================================
+    // THEME MANAGER (Executive, Emerald, Quantum, Light)
+    // ==========================================================================
+    function initTheme() {
+      const saved = localStorage.getItem('smart_presensi_theme_cockpit') || 'executive';
+      setExecutiveTheme(saved, false);
+    }
+
+    function setExecutiveTheme(themeName, save = true) {
+      document.documentElement.setAttribute('data-theme', themeName);
+      if (save) localStorage.setItem('smart_presensi_theme_cockpit', themeName);
+
+      document.querySelectorAll('.theme-dot').forEach(dot => {
+        dot.classList.remove('active');
+        if (dot.classList.contains(`dot-${themeName.substring(0, 3)}`)) {
+          dot.classList.add('active');
+        }
+      });
+      showToast(`Tema: ${themeName.toUpperCase()}`, 'info', 1500);
+    }
+
+    // ==========================================================================
+    // AUDIO SYNTHESIZER
+    // ==========================================================================
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function playBeep(type = 'success') {
+      if (!State.audioEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'success') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+
+            gain.gain.setValueAtTime(0.07, now + idx * 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.05 + 0.35);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.05);
+            osc.stop(now + idx * 0.05 + 0.35);
+          });
+        } else if (type === 'warning') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(330, now);
+          osc.frequency.setValueAtTime(280, now + 0.1);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.setValueAtTime(120, now + 0.15);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        }
+      } catch (e) {}
+    }
+
+    function toggleAudioFeedback() {
+      State.audioEnabled = !State.audioEnabled;
+      const icon = $('audioIcon');
+      if (State.audioEnabled) {
+        icon.className = 'fas fa-volume-up';
+        showToast('🔊 Audio aktif', 'info', 2000);
+        playBeep('success');
+      } else {
+        icon.className = 'fas fa-volume-mute';
+        showToast('🔇 Audio bisu', 'info', 2000);
+      }
+    }
+
+    // ==========================================================================
+    // CLOCK & CALENDAR
+    // ==========================================================================
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      if ($('liveClock')) $('liveClock').innerHTML = `${h}:${m}:<span style="color:var(--accent-light); font-weight:700;">${s}</span> WIB`;
+
+      const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+      if ($('liveDateStr')) $('liveDateStr').textContent = now.toLocaleDateString('id-ID', options);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function todayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function escapeHtml(s) {
+      if (s == null) return '';
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    let toastTimer = null;
+    function showToast(message, type = 'info', duration = 3500) {
+      const bar = $('toastStrip');
+      const text = $('toastText');
+      const icon = $('toastIcon');
+      if (!bar || !text) return;
+
+      const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-triangle-exclamation',
+        warning: 'fa-circle-exclamation',
+        info: 'fa-circle-info'
+      };
+
+      bar.className = `toast-strip-spatial ${type}`;
+      icon.className = `fas ${icons[type] || 'fa-circle-info'}`;
+      text.textContent = message;
+      bar.style.display = 'flex';
+
+      clearTimeout(toastTimer);
+      if (duration > 0) {
+        toastTimer = setTimeout(() => { bar.style.display = 'none'; }, duration);
+      }
+    }
+
+    function setConnectionStatus(status, message) {
+      const dot = $('statusDot');
+      const label = $('statusLabel');
+      if (!dot || !label) return;
+      dot.className = 'pulse-dot ' + status;
+      label.textContent = message;
+      State.isOnline = (status === 'online');
+    }
+
+    // ==========================================================================
+    // GOOGLE SHEETS API INTEGRATION & DATA SYNC
+    // ==========================================================================
+    async function apiGet(action, params = {}) {
+      const qs = new URLSearchParams({ action, t: Date.now(), ...params });
+      const res = await fetch(CONFIG.API_URL + '?' + qs.toString(), { method: 'GET', redirect: 'follow' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }
+
+    async function apiPost(action, payload = {}) {
+      const res = await fetch(CONFIG.API_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, ...payload })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }
+
+    function loadCacheMahasiswa() {
+      try {
+        const raw = localStorage.getItem(CONFIG.CACHE_KEY_MAHASISWA);
+        return raw ? JSON.parse(raw) : [];
+      } catch { return []; }
+    }
+    function saveCacheMahasiswa(data) {
+      try { localStorage.setItem(CONFIG.CACHE_KEY_MAHASISWA, JSON.stringify(data)); } catch {}
+    }
+
+    function loadCachePresensi() {
+      try {
+        const raw = localStorage.getItem(CONFIG.CACHE_KEY_PRESENSI);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed.tanggal !== todayStr()) return null;
+        return parsed.map || {};
+      } catch { return null; }
+    }
+    function saveCachePresensi(map) {
+      try {
+        localStorage.setItem(CONFIG.CACHE_KEY_PRESENSI, JSON.stringify({ tanggal: todayStr(), map }));
+      } catch {}
+    }
+
+    function loadOfflineQueue() {
+      try {
+        const raw = localStorage.getItem(CONFIG.CACHE_KEY_OFFLINE_QUEUE);
+        return raw ? JSON.parse(raw) : [];
+      } catch { return []; }
+    }
+    function saveOfflineQueue(queue) {
+      try { localStorage.setItem(CONFIG.CACHE_KEY_OFFLINE_QUEUE, JSON.stringify(queue)); } catch {}
+    }
+
+    async function checkConnection() {
+      setConnectionStatus('checking', 'Mengecek server...');
+      try {
+        const json = await apiGet('ping');
+        if (json.success) {
+          setConnectionStatus('online', 'Terhubung ke Google Sheets');
+          return true;
+        }
+        throw new Error(json.error || 'Ping gagal');
+      } catch (err) {
+        setConnectionStatus('offline', 'Mode Offline (Cache Aktif)');
+        return false;
+      }
+    }
+
+    async function loadAllData() {
+      State.tanggalHariIni = todayStr();
+
+      const cachedMhs = loadCacheMahasiswa();
+      if (cachedMhs.length) {
+        State.mahasiswa = cachedMhs;
+        State.presensiHariIni = loadCachePresensi() || {};
+        updateStats();
+        renderTable();
+        populateKtmDatalist();
+      }
+
+      const isOnline = await checkConnection();
+      if (!isOnline) {
+        if (!cachedMhs.length) showTableEmpty('offline');
+        else showToast('Mode Offline: Memakai data tersimpan', 'warning', 3000);
+        return;
+      }
+
+      try {
+        const mhsRes = await apiGet('get_all');
+        if (mhsRes.success && Array.isArray(mhsRes.data)) {
+          State.mahasiswa = mhsRes.data;
+          saveCacheMahasiswa(mhsRes.data);
+        }
+
+        const presRes = await apiGet('get_presensi', { tanggal: todayStr() });
+        if (presRes.success && Array.isArray(presRes.data)) {
+          const map = {};
+          presRes.data.forEach(p => {
+            if (p.nim) map[String(p.nim).trim()] = p;
+          });
+          State.presensiHariIni = map;
+          saveCachePresensi(map);
+        }
+
+        updateStats();
+        renderTable();
+        populateKtmDatalist();
+        showToast(`Sinkron sukses: ${State.mahasiswa.length} mahasiswa`, 'success', 2200);
+
+        syncLocalQueue();
+      } catch (err) {
+        console.error('Sync Error:', err);
+        if (State.mahasiswa.length) {
+          showToast('Koneksi terhambat — memakai cache', 'warning', 3000);
+          renderTable();
+        } else {
+          showTableEmpty('error', err.message);
+        }
+      }
+    }
+
+    async function syncLocalQueue() {
+      const queue = loadOfflineQueue();
+      if (!queue.length) return;
+
+      showToast(`Menyinkronkan ${queue.length} presensi offline...`, 'info', 0);
+      const remaining = [];
+
+      for (const item of queue) {
+        try {
+          const res = await apiPost('presensi', item);
+          if (res.success || res.already) {
+            // Success
+          } else {
+            remaining.push(item);
+          }
+        } catch {
+          remaining.push(item);
+        }
+      }
+
+      saveOfflineQueue(remaining);
+      if (remaining.length === 0) {
+        showToast('Semua presensi offline berhasil diunggah!', 'success', 3500);
+      }
+      loadAllData();
+    }
+
+    // ==========================================================================
+    // STATS & CIRCULAR RADIAL GAUGE
+    // ==========================================================================
+    function updateStats() {
+      const total = State.mahasiswa.length;
+      const hadir = Object.keys(State.presensiHariIni).length;
+      const belum = Math.max(0, total - hadir);
+      const persen = total > 0 ? Math.round((hadir / total) * 100) : 0;
+
+      if ($('statTotalVal')) $('statTotalVal').textContent = total;
+      if ($('statHadirVal')) $('statHadirVal').textContent = hadir;
+      if ($('statBelumVal')) $('statBelumVal').textContent = belum;
+      if ($('gaugePercentText')) $('gaugePercentText').textContent = `${persen}%`;
+
+      if ($('pillCountAll')) $('pillCountAll').textContent = total;
+      if ($('pillCountHadir')) $('pillCountHadir').textContent = hadir;
+      if ($('pillCountBelum')) $('pillCountBelum').textContent = belum;
+
+      // Update Radial SVG Circle (circumference = 2 * PI * 70 = 439.82)
+      const circle = $('gaugeValCircle');
+      if (circle) {
+        const offset = 440 - (440 * (persen / 100));
+        circle.style.strokeDashoffset = offset;
+      }
+
+      // Update Recent Stream Feed
+      updateStreamFeed();
+    }
+
+    function updateStreamFeed() {
+      const list = $('streamFeedList');
+      if (!list) return;
+
+      const hadirKeys = Object.keys(State.presensiHariIni);
+      if (!hadirKeys.length) {
+        list.innerHTML = `
+          <div style="text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 12px;">
+            <i class="fas fa-satellite-dish" style="font-size: 24px; opacity: 0.4; display: block; margin-bottom: 8px;"></i>
+            Belum ada aktivitas presensi hari ini
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = '';
+      hadirKeys.slice(-6).reverse().forEach(nim => {
+        const data = State.presensiHariIni[nim];
+        const mhs = State.mahasiswa.find(m => String(m.nim).trim() === String(nim).trim()) || { nama: data.nama || nim };
+        const initial = (mhs.nama || 'M').charAt(0).toUpperCase();
+
+        const item = document.createElement('div');
+        item.className = 'stream-item-chip';
+        item.innerHTML = `
+          <div class="stream-user">
+            <div class="stream-avatar">${escapeHtml(initial)}</div>
+            <div>
+              <strong style="color:var(--text-main);">${escapeHtml(mhs.nama)}</strong>
+              <div style="font-size:10px; color:var(--text-muted);">${escapeHtml(nim)}</div>
+            </div>
+          </div>
+          <span style="font-family:var(--font-mono); font-size:11px; color:var(--accent-light);">
+            ${escapeHtml(data.waktu ? data.waktu.split(' ')[1] || data.waktu : 'Hadir')}
+          </span>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    // ==========================================================================
+    // ATTENDANCE DATA TABLE
+    // ==========================================================================
+    function setTableFilter(filterType, element) {
+      State.currentFilter = filterType;
+      document.querySelectorAll('.matrix-filters .m-pill').forEach(p => p.classList.remove('active'));
+      if (element) element.classList.add('active');
+      renderTable();
+    }
+
+    function handleTableFilter() {
+      State.searchQuery = ($('tableSearchInput')?.value || '').toLowerCase().trim();
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = $('attendanceTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (!State.mahasiswa.length) {
+        showTableEmpty('empty');
+        return;
+      }
+
+      let filtered = State.mahasiswa.filter(m => {
+        const nim = String(m.nim || '').toLowerCase();
+        const nama = String(m.nama || '').toLowerCase();
+        const kelas = String(m.kelas || '').toLowerCase();
+        const jurusan = String(m.jurusan || '').toLowerCase();
+        const matchSearch = nim.includes(State.searchQuery) || nama.includes(State.searchQuery) || kelas.includes(State.searchQuery) || jurusan.includes(State.searchQuery);
+
+        const isHadir = !!State.presensiHariIni[String(m.nim || '').trim()];
+        if (State.currentFilter === 'hadir') return matchSearch && isHadir;
+        if (State.currentFilter === 'belum') return matchSearch && !isHadir;
+        return matchSearch;
+      });
+
+      if (!filtered.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 35px; color: var(--text-muted);">
+              <i class="fas fa-magnifying-glass" style="font-size: 20px; margin-bottom: 8px; display: block; opacity: 0.5;"></i>
+              Tidak ada mahasiswa yang cocok dengan pencarian "<strong>${escapeHtml(State.searchQuery)}</strong>"
+            </td>
+          </tr>`;
+        return;
+      }
+
+      filtered.forEach(mhs => {
+        const nim = String(mhs.nim || '').trim();
+        const hadirData = State.presensiHariIni[nim];
+        const isHadir = !!hadirData;
+        const tr = document.createElement('tr');
+        const initial = (mhs.nama || 'M').charAt(0).toUpperCase();
+
+        tr.innerHTML = `
+          <td>
+            <div class="user-flex-cell">
+              <div class="avatar-cell-3d">${escapeHtml(initial)}</div>
+              <div>
+                <div style="font-weight: 700; color: var(--text-main);">${escapeHtml(mhs.nama || '-')}</div>
+                <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(mhs.jurusan || '-')}</div>
+              </div>
+            </div>
+          </td>
+          <td><strong style="font-family: var(--font-mono); color: var(--primary-light);">${escapeHtml(nim)}</strong></td>
+          <td>${escapeHtml(mhs.kelas || '-')}</td>
+          <td style="text-align: right;">
+            <div style="display: inline-flex; align-items: center; gap: 8px;">
+              <span class="chip-status-3d ${isHadir ? 'hadir' : 'belum'}">
+                <i class="fas ${isHadir ? 'fa-check-circle' : 'fa-clock'}"></i>
+                ${isHadir ? (hadirData.waktu ? hadirData.waktu.split(' ')[1] || 'Hadir' : 'Hadir') : 'Belum'}
+              </span>
+              ${!isHadir ? `
+                <button class="btn-tactile-3d" style="padding: 4px 8px; font-size: 11px;" title="Tandai Hadir" onclick="checkInManual('${escapeHtml(nim)}')">
+                  <i class="fas fa-check"></i>
+                </button>
+              ` : ''}
+              <button class="btn-tactile-3d" style="padding: 4px 8px; font-size: 11px;" title="Buka KTM 3D" onclick="openKtmForStudent('${escapeHtml(nim)}')">
+                <i class="fas fa-id-card"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function showTableEmpty(type, detail = '') {
+      const tbody = $('attendanceTableBody');
+      if (!tbody) return;
+      if (type === 'offline') {
+        tbody.innerHTML = `
+          <tr><td colspan="4" style="text-align: center; padding: 40px;">
+            <i class="fas fa-wifi" style="color:var(--danger); font-size: 28px; display:block; margin-bottom: 10px;"></i>
+            <strong style="color:var(--danger)">Tidak Ada Jaringan</strong><br>
+            <span style="font-size: 12px; color: var(--text-muted);">Tidak dapat menghubungi server.</span>
+          </td></tr>`;
+      } else if (type === 'empty') {
+        tbody.innerHTML = `
+          <tr><td colspan="4" style="text-align: center; padding: 40px;">
+            <i class="fas fa-user-slash" style="color:var(--warning); font-size: 28px; display:block; margin-bottom: 10px;"></i>
+            <strong>Belum ada mahasiswa di Google Sheets</strong><br>
+            <span style="font-size: 12px; color: var(--text-muted);">Tambahkan data pada spreadsheet Anda.</span>
+          </td></tr>`;
+      } else {
+        tbody.innerHTML = `
+          <tr><td colspan="4" style="text-align: center; padding: 40px;">
+            <i class="fas fa-triangle-exclamation" style="color:var(--danger); font-size: 28px; display:block; margin-bottom: 10px;"></i>
+            <strong style="color:var(--danger)">Gagal Memuat Data</strong><br>
+            <span style="font-size: 12px; color: var(--text-muted);">${escapeHtml(detail)}</span>
+          </td></tr>`;
+      }
+    }
+
+    // ==========================================================================
+    // 3D SCANNER ENGINE
+    // ==========================================================================
+    function toggleScanner() {
+      if (State.scanning) stopScanner();
+      else startScanner();
+    }
+
+    function switchCameraMode() {
+      State.facingMode = State.facingMode === 'environment' ? 'user' : 'environment';
+      showToast(`Kamera ${State.facingMode === 'environment' ? 'belakang' : 'depan'}`, 'info', 1800);
+      if (State.scanning) {
+        stopScanner().then(() => setTimeout(startScanner, 350));
+      }
+    }
+
+    async function startScanner() {
+      if (State.scanning) return;
+      if (State.scanner) {
+        try { await State.scanner.clear(); } catch {}
+        State.scanner = null;
+      }
+
+      const readerEl = $('qr-reader');
+      if (readerEl) readerEl.innerHTML = '';
+
+      updateScanButtonState(true);
+
+      try {
+        State.scanner = new Html5Qrcode("qr-reader", {
+          verbose: false,
+          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
+        });
+
+        const config = { fps: 15, qrbox: { width: 180, height: 180 }, aspectRatio: 1.0 };
+        const onSuccess = (text) => onScanSuccess(text);
+        const onError = () => {};
+
+        await State.scanner.start({ facingMode: State.facingMode }, config, onSuccess, onError);
+        State.scanning = true;
+        if ($('scannerStatusText')) $('scannerStatusText').textContent = 'Sensor Aktif &bull; Pindai QR';
+        if ($('laserBeam')) $('laserBeam').style.display = 'block';
+      } catch (err) {
+        try {
+          const altMode = State.facingMode === 'environment' ? 'user' : 'environment';
+          await State.scanner.start({ facingMode: altMode }, { fps: 12, qrbox: 180 }, (t) => onScanSuccess(t), () => {});
+          State.facingMode = altMode;
+          State.scanning = true;
+          if ($('scannerStatusText')) $('scannerStatusText').textContent = 'Kamera Depan Aktif';
+        } catch (err2) {
+          showToast('Kamera tidak dapat diakses: ' + err2.message, 'error', 5000);
+          playBeep('error');
+          updateScanButtonState(false);
+        }
+      }
+    }
+
+    async function stopScanner() {
+      if (State.scanner && State.scanning) {
+        try {
+          await State.scanner.stop();
+          await State.scanner.clear();
+        } catch (e) {}
+        State.scanner = null;
+      }
+      State.scanning = false;
+      updateScanButtonState(false);
+      if ($('scannerStatusText')) $('scannerStatusText').textContent = 'Scanner berhenti';
+      if ($('laserBeam')) $('laserBeam').style.display = 'none';
+    }
+
+    function updateScanButtonState(isScanning) {
+      const btn = $('btnToggleScan');
+      const icon = $('btnScanIcon');
+      const text = $('btnScanText');
+      if (!btn) return;
+
+      if (isScanning) {
+        btn.classList.add('btn-stop-danger');
+        btn.classList.remove('btn-primary-gradient');
+        icon.className = 'fas fa-stop';
+        text.textContent = 'Stop Scan';
+      } else {
+        btn.classList.remove('btn-stop-danger');
+        btn.classList.add('btn-primary-gradient');
+        icon.className = 'fas fa-play';
+        text.textContent = 'Mulai Scan';
+      }
+    }
+
+    async function toggleFlash() {
+      State.flashOn = !State.flashOn;
+      try {
+        const video = document.querySelector('#qr-reader video');
+        if (!video || !video.srcObject) return;
+        const track = video.srcObject.getVideoTracks()[0];
+        if (!track) return;
+        const caps = track.getCapabilities ? track.getCapabilities() : {};
+        if (caps.torch) {
+          await track.applyConstraints({ advanced: [{ torch: State.flashOn }] });
+        } else {
+          showToast('Flashlight tidak didukung pada kamera ini', 'warning', 2500);
+        }
+      } catch (e) {}
+    }
+
+    function triggerFileInput() {
+      const fileInput = $('qrFileInput');
+      if (fileInput) fileInput.click();
+    }
+
+    function handleQrFile(input) {
+      if (!input.files || input.files.length === 0) return;
+      const file = input.files[0];
+      const html5QrCode = new Html5Qrcode("qr-reader");
+
+      showToast('Memindai gambar QR...', 'info', 0);
+      html5QrCode.scanFile(file, true)
+        .then(decodedText => {
+          onScanSuccess(decodedText);
+          input.value = '';
+        })
+        .catch(err => {
+          playBeep('error');
+          showToast('Gagal membaca QR Code dari file: ' + err, 'error', 3500);
+          input.value = '';
+        });
+    }
+
+    function onScanSuccess(decodedText) {
+      if (State.processing) return;
+      State.processing = true;
+
+      if (navigator.vibrate) navigator.vibrate([70, 40, 70]);
+      processPresensi(decodedText);
+    }
+
+    function punchManualNIM() {
+      const input = $('manualNimInput');
+      const nim = (input ? input.value : '').trim();
+      if (!nim) {
+        showToast('Ketik NIM terlebih dahulu!', 'warning', 2500);
+        if (input) input.focus();
+        return;
+      }
+      processPresensi(nim);
+      if (input) input.value = '';
+    }
+
+    function checkInManual(nim) {
+      processPresensi(nim);
+    }
+
+    async function processPresensi(qrRaw) {
+      const tanggal = todayStr();
+      try {
+        showToast('Memverifikasi presensi...', 'info', 0);
+
+        let nim = '';
+        try {
+          const parsed = JSON.parse(qrRaw);
+          nim = String(parsed.nim || '').trim();
+        } catch {
+          nim = String(qrRaw || '').trim();
+        }
+
+        if (!nim || nim.length < 3) {
+          playBeep('error');
+          showToast('Format QR Code tidak valid!', 'error', 3000);
+          return;
+        }
+
+        const mhs = State.mahasiswa.find(m => String(m.nim).trim() === nim);
+        if (!mhs) {
+          playBeep('error');
+          showToast(`NIM ${nim} tidak terdaftar di kelas!`, 'error', 3500);
+          return;
+        }
+
+        if (State.presensiHariIni[nim]) {
+          playBeep('warning');
+          showToast(`⚠️ ${mhs.nama} sudah tercatat hadir hari ini!`, 'warning', 3500);
+          return;
+        }
+
+        const payload = {
+          nim,
+          nama: mhs.nama || '',
+          kelas: mhs.kelas || '',
+          jurusan: mhs.jurusan || '',
+          mataKuliah: 'Presensi Kelas',
+          status: 'Hadir'
+        };
+
+        let result;
+        try {
+          result = await apiPost('presensi', payload);
+        } catch (netErr) {
+          const jamNow = new Date().toLocaleTimeString('id-ID');
+          const rec = { nim, tanggal, offline: true, waktu: `${tanggal} ${jamNow}` };
+          State.presensiHariIni[nim] = rec;
+          saveCachePresensi(State.presensiHariIni);
+
+          const q = loadOfflineQueue();
+          q.push(payload);
+          saveOfflineQueue(q);
+
+          updateStats();
+          renderTable();
+          playBeep('success');
+          triggerSuccessConfetti();
+          openSuccessModal(mhs, `${jamNow} (Tersimpan Lokal/Offline)`);
+          return;
+        }
+
+        if (result.success) {
+          const jamRes = result.waktu || new Date().toLocaleTimeString('id-ID');
+          State.presensiHariIni[nim] = {
+            nim,
+            tanggal,
+            waktu: jamRes,
+            nama: mhs.nama
+          };
+          saveCachePresensi(State.presensiHariIni);
+          updateStats();
+          renderTable();
+          playBeep('success');
+          triggerSuccessConfetti();
+          openSuccessModal(mhs, jamRes);
+        } else if (result.already) {
+          playBeep('warning');
+          State.presensiHariIni[nim] = { nim, tanggal, waktu: result.data?.waktu || '' };
+          saveCachePresensi(State.presensiHariIni);
+          updateStats();
+          renderTable();
+          showToast(`⚠️ ${mhs.nama} sudah tercatat sebelumnya`, 'warning', 3500);
+        } else {
+          playBeep('error');
+          showToast('❌ Gagal: ' + (result.error || 'Terjadi kesalahan sistem'), 'error', 4000);
+        }
+
+      } catch (err) {
+        console.error(err);
+        playBeep('error');
+        showToast('Terjadi kesalahan: ' + err.message, 'error', 4000);
+      } finally {
+        setTimeout(() => {
+          State.processing = false;
+        }, CONFIG.RESCAN_DELAY_MS);
+      }
+    }
+
+    function triggerSuccessConfetti() {
+      try {
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 80,
+            spread: 75,
+            origin: { y: 0.65 },
+            colors: ['#6366f1', '#10b981', '#06b6d4', '#f59e0b']
+          });
+        }
+      } catch (e) {}
+    }
+
+    function openSuccessModal(mhs, waktuStr) {
+      const modal = $('successModalLayer');
+      const details = $('modalStudentDataBody');
+      if (!modal || !details) return;
+
+      details.innerHTML = `
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted); font-size:12px;">Nama Lengkap</span>
+          <span style="font-weight:700;">${escapeHtml(mhs.nama)}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted); font-size:12px;">NIM</span>
+          <span style="font-family:var(--font-mono); color:var(--primary-light); font-weight:700;">${escapeHtml(mhs.nim)}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted); font-size:12px;">Kelas / Prodi</span>
+          <span>${escapeHtml(mhs.kelas || '-')} &bull; ${escapeHtml(mhs.jurusan || '-')}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted); font-size:12px;">Waktu Presensi</span>
+          <span style="color:var(--accent-light); font-weight:800;">${escapeHtml(waktuStr)}</span>
+        </div>
+      `;
+      modal.classList.add('show');
+    }
+
+    function closeSuccessModal() {
+      const modal = $('successModalLayer');
+      if (modal) modal.classList.remove('show');
+    }
+
+    // ==========================================================================
+    // KTM 3D FLIP STUDIO ENGINE
+    // ==========================================================================
+    function populateKtmDatalist() {
+      const datalist = $('ktmDatalist');
+      if (!datalist) return;
+      datalist.innerHTML = '';
+      State.mahasiswa.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.nim;
+        opt.label = `${m.nama} (${m.kelas || '-'})`;
+        datalist.appendChild(opt);
+      });
+    }
+
+    function autoSelectStudentForKTM() {
+      const nim = ($('ktmNimInput')?.value || '').trim();
+      const mhs = State.mahasiswa.find(m => String(m.nim).trim() === nim);
+      if (mhs) renderKTMCard();
+    }
+
+    function openKtmForStudent(nim) {
+      switchView('ktm');
+      if ($('ktmNimInput')) $('ktmNimInput').value = nim;
+      renderKTMCard();
+    }
+
+    function renderKTMCard() {
+      const input = $('ktmNimInput');
+      const nim = (input ? input.value : '').trim();
+
+      if (!nim) {
+        showToast('Pilih atau ketik NIM mahasiswa', 'warning', 2500);
+        if (input) input.focus();
+        return;
+      }
+
+      const mhs = State.mahasiswa.find(m => String(m.nim).trim() === nim);
+      if (!mhs) {
+        showToast(`NIM ${nim} tidak ditemukan dalam daftar!`, 'error', 3000);
+        return;
+      }
+
+      $('ktmCardName').textContent = mhs.nama || '-';
+      $('ktmCardNim').textContent = mhs.nim;
+      $('ktmCardJurusan').textContent = mhs.jurusan || 'Teknik Informatika';
+      $('ktmCardKelas').textContent = `Kelas: ${mhs.kelas || '-'}`;
+      $('ktmAvatarInitials').textContent = (mhs.nama || 'M').charAt(0).toUpperCase();
+      if ($('ktmBarcodeNum')) $('ktmBarcodeNum').textContent = `${mhs.nim}0000`;
+
+      const qrPayload = {
+        nim: mhs.nim,
+        nama: mhs.nama,
+        kelas: mhs.kelas,
+        jurusan: mhs.jurusan,
+        link_sheet: CONFIG.SHEET_URL,
+        timestamp: new Date().toISOString()
+      };
+
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(JSON.stringify(qrPayload))}`;
+      $('ktmCardQrImg').src = qrUrl;
+
+      showToast(`KTM 3D siap untuk ${mhs.nama}`, 'success', 2200);
+    }
+
+    function downloadKtmCard() {
+      const nim = ($('ktmNimInput')?.value || 'student').trim();
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 480;
+      const ctx = canvas.getContext('2d');
+
+      const grad = ctx.createLinearGradient(0, 0, 800, 480);
+      grad.addColorStop(0, '#0b1120');
+      grad.addColorStop(0.5, '#1e1b4b');
+      grad.addColorStop(1, '#064e3b');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(0, 0, 800, 480, 36);
+      ctx.fill();
+
+      ctx.strokeStyle = '#6366f1';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('UNIVERSITAS TEKNOLOGI', 90, 68);
+      ctx.fillStyle = '#818cf8';
+      ctx.font = '14px "JetBrains Mono", monospace';
+      ctx.fillText('KARTU TANDA MAHASISWA 3D DIGITAL', 90, 96);
+
+      ctx.fillStyle = '#4f46e5';
+      ctx.beginPath();
+      ctx.roundRect(50, 150, 130, 130, 24);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 64px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      const initial = ($('ktmCardName').textContent || 'M').charAt(0).toUpperCase();
+      ctx.fillText(initial, 115, 238);
+      ctx.textAlign = 'left';
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 28px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText($('ktmCardName').textContent, 210, 185);
+
+      ctx.fillStyle = '#34d399';
+      ctx.font = 'bold 22px "JetBrains Mono", monospace';
+      ctx.fillText('NIM: ' + $('ktmCardNim').textContent, 210, 225);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.font = '18px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText($('ktmCardJurusan').textContent, 210, 260);
+      ctx.fillStyle = '#a855f7';
+      ctx.fillText($('ktmCardKelas').textContent, 210, 290);
+
+      const qrImg = $('ktmCardQrImg');
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.roundRect(570, 130, 180, 180, 20);
+        ctx.fill();
+        ctx.drawImage(img, 580, 140, 160, 160);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.font = '14px "JetBrains Mono", monospace';
+        ctx.fillText('SMART PRESENSI 3D CERTIFIED • TAHUN AKADEMIK 2026/2027', 50, 420);
+
+        const a = document.createElement('a');
+        a.download = `KTM-Digital-${nim}.png`;
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+        showToast('KTM Digital berhasil diunduh (PNG)', 'success', 2500);
+      };
+      img.src = qrImg.src;
+    }
+
+    function printKtmCard() { window.print(); }
+
+    // ==========================================================================
+    // QR KELAS & AUDITORIUM PROJECTOR
+    // ==========================================================================
+    function generateClassQR() {
+      const classPayload = {
+        nim: 'ABSENSI-KELAS',
+        nama: 'Presensi Kelas Masal',
+        kelas: 'Semua',
+        jurusan: 'Semua',
+        link_sheet: CONFIG.SHEET_URL,
+        timestamp: new Date().toISOString()
+      };
+
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=450x450&data=${encodeURIComponent(JSON.stringify(classPayload))}`;
+      if ($('classMainQrImg')) $('classMainQrImg').src = qrUrl;
+      if ($('projectorOverlayQrImg')) $('projectorOverlayQrImg').src = qrUrl;
+    }
+
+    function downloadClassQR() {
+      const img = $('classMainQrImg');
+      if (!img || !img.src) return;
+
+      const a = document.createElement('a');
+      a.download = `QR-Presensi-Kelas-Utama.png`;
+      a.href = img.src;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('QR Kelas berhasil diunduh', 'success', 2000);
+    }
+
+    function openFullscreenProjector() {
+      const overlay = $('projectorOverlay');
+      if (!overlay) return;
+      overlay.style.display = 'flex';
+
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    }
+
+    function closeFullscreenProjector() {
+      const overlay = $('projectorOverlay');
+      if (overlay) overlay.style.display = 'none';
+
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeFullscreenProjector();
+    });
+
+    // ==========================================================================
+    // CSV EXPORT
+    // ==========================================================================
+    function exportAttendanceCSV() {
+      if (!State.mahasiswa.length) {
+        showToast('Tidak ada data untuk diekspor', 'warning', 2500);
+        return;
+      }
+
+      let csv = 'No,NIM,Nama Mahasiswa,Jurusan,Kelas,Status,Waktu Presensi\n';
+      State.mahasiswa.forEach((m, idx) => {
+        const nim = String(m.nim || '').trim();
+        const hadir = State.presensiHariIni[nim];
+        const status = hadir ? 'Hadir' : 'Belum Hadir';
+        const waktu = hadir ? (hadir.waktu || 'Hadir') : '-';
+        csv += `"${idx + 1}","${m.nim}","${m.nama || ''}","${m.jurusan || ''}","${m.kelas || ''}","${status}","${waktu}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.download = `Rekap-Presensi-3D-${todayStr()}.csv`;
+      a.href = url;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('File CSV berhasil diunduh', 'success', 2500);
+    }
+
+    // ==========================================================================
+    // INITIALIZATION
+    // ==========================================================================
+    async function initApp() {
+      initTheme();
+      initThreeJS();
+
+      const sheetUrlPresensi = CONFIG.SHEET_URL.split('#')[0] + '#gid=' + CONFIG.SHEET_GID_PRESENSI;
+      if ($('sheetLink')) $('sheetLink').href = sheetUrlPresensi;
+
+      generateClassQR();
+      await loadAllData();
+
+      setTimeout(startScanner, 600);
+      setInterval(loadAllData, CONFIG.REFRESH_INTERVAL_MS);
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
+
+    window.addEventListener('beforeunload', () => {
+      if (State.scanner && State.scanning) {
+        State.scanner.stop().catch(() => {});
+      }
+    });
+  </script>
+</body>
+</html>
